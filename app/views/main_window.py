@@ -12,7 +12,7 @@ from PyQt6.QtWidgets import (
     QPushButton, QLabel, QStackedWidget, QStatusBar,
     QSizePolicy, QFrame, QApplication, QScrollArea,
 )
-from PyQt6.QtCore import Qt, pyqtSignal, QTimer, QObject, QEvent
+from PyQt6.QtCore import Qt, QTimer, QObject, QEvent
 
 from app.models.settings_model import get_setting, set_setting
 from app.utils.animated_bg   import AnimatedBackground

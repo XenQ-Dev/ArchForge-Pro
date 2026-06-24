@@ -4,14 +4,12 @@ Charts generated with matplotlib and embedded as PNG images via ReportLab.
 """
 from __future__ import annotations
 import io
-from pathlib import Path
 from datetime import datetime
 
 import matplotlib
 matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 import matplotlib.patches as mpatches
-from matplotlib.gridspec import GridSpec
 import numpy as np
 
 from reportlab.lib.pagesizes import A4
@@ -23,7 +21,6 @@ from reportlab.platypus import (
     Spacer, HRFlowable, Image, KeepTogether,
 )
 from reportlab.lib.enums import TA_CENTER, TA_RIGHT, TA_LEFT
-from reportlab.lib.utils import ImageReader
 
 from app.models.project_model import get_project
 from app.models.estimate_model import get_estimate

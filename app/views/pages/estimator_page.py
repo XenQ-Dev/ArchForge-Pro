@@ -41,32 +41,46 @@ class EstimatorPage(QWidget):
 
         # ── Left: Controls ──────────────────────────────────────────────────
         left = QWidget()
-        left.setMinimumWidth(300)
-        left.setMaximumWidth(380)
+        left.setFixedWidth(320)
         left_lay = QVBoxLayout(left)
         left_lay.setContentsMargins(0, 4, 16, 0)
         left_lay.setSpacing(16)
 
         # Project selector
         proj_group = QGroupBox("Select Project")
-        proj_form = QFormLayout(proj_group)
-        proj_form.setContentsMargins(8, 12, 8, 8)
-        proj_form.setSpacing(12)
-        proj_form.setLabelAlignment(Qt.AlignmentFlag.AlignRight)
+        proj_vlay = QVBoxLayout(proj_group)
+        proj_vlay.setContentsMargins(10, 10, 10, 10)
+        proj_vlay.setSpacing(8)
+
         self._proj_combo = QComboBox()
         self._proj_combo.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         self._proj_combo.currentIndexChanged.connect(self._on_project_changed)
-        proj_form.addRow("Project:", self._proj_combo)
+        proj_vlay.addWidget(self._proj_combo)
 
-        # Project info labels
-        self._info_type = QLabel("—")
-        self._info_area = QLabel("—")
-        self._info_floors = QLabel("—")
+        # Project info grid
+        self._info_type    = QLabel("—")
+        self._info_area    = QLabel("—")
+        self._info_floors  = QLabel("—")
         self._info_quality = QLabel("—")
-        proj_form.addRow("Type:", self._info_type)
-        proj_form.addRow("Built-up Area:", self._info_area)
-        proj_form.addRow("Floors:", self._info_floors)
-        proj_form.addRow("Quality:", self._info_quality)
+
+        for lbl_text, val_lbl in [
+            ("Type",         self._info_type),
+            ("Built-up Area",self._info_area),
+            ("Floors",       self._info_floors),
+            ("Quality",      self._info_quality),
+        ]:
+            row = QHBoxLayout()
+            row.setSpacing(6)
+            lbl = QLabel(f"{lbl_text}:")
+            lbl.setObjectName("form_label")
+            lbl.setFixedWidth(100)
+            lbl.setAlignment(Qt.AlignmentFlag.AlignRight | Qt.AlignmentFlag.AlignVCenter)
+            val_lbl.setObjectName("form_label")
+            row.addWidget(lbl)
+            row.addWidget(val_lbl)
+            row.addStretch()
+            proj_vlay.addLayout(row)
+
         left_lay.addWidget(proj_group)
 
         # Parameters group
