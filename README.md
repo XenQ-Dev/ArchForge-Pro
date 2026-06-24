@@ -36,6 +36,9 @@ ArchForge Pro is a **fully offline** Windows desktop application for Indian cons
 
 | | Feature | Description |
 |---|---|---|
+| 🔐 | **Secure Accounts** | Email + password login with PBKDF2-SHA256 hashed passwords (260k iterations) and per-user data isolation |
+| 📧 | **Email Verification** | 5-digit OTP emailed via Gmail SMTP on sign-up; forgot-password reset by emailed code |
+| 💾 | **Persistent Sessions** | Stay signed in across app restarts until you explicitly sign out |
 | 🏗️ | **Rule-based Estimator** | Applies Indian Standard rates by quality tier (Economy → Luxury), computes material quantities, labour, equipment, GST in one pass |
 | 🤖 | **ML Cost Prediction** | XGBoost model trained on Indian project data — independent cost check with confidence range |
 | 📋 | **BOQ Generator** | Full Bill of Quantities from a saved estimate, exportable to PDF and Excel |
@@ -52,6 +55,21 @@ ArchForge Pro is a **fully offline** Windows desktop application for Indian cons
 ## Screenshots
 
 <div align="center">
+
+**Sign In — Pixel UI with Interactive Constellation Background**
+![Sign In](screenshots/signin.png)
+
+<br/>
+
+**Sign Up — Create Account**
+![Sign Up](screenshots/signup.png)
+
+<br/>
+
+**Email Verification — 5-digit OTP**
+![Verification](screenshots/verification.png)
+
+<br/>
 
 **Dark Mode — Dashboard**
 ![Dashboard](screenshots/dashboard.png)
@@ -72,6 +90,39 @@ ArchForge Pro is a **fully offline** Windows desktop application for Indian cons
 ![Report Page 2](screenshots/report_page2.png)
 
 </div>
+
+---
+
+## Authentication & Accounts
+
+ArchForge Pro is multi-user. Every project, estimate, BOQ, expense, and timeline is tied to the account that created it — users only ever see their own data.
+
+### Sign-in flow
+
+```
+App launch ──► Login screen ──► Dashboard
+                   │
+                   ├─ Sign up ──► Email verification (5-digit OTP) ──► Dashboard
+                   └─ Forgot password ──► Emailed reset code ──► New password
+```
+
+- **Login** — email + password. Passwords are stored as PBKDF2-SHA256 hashes (260,000 iterations, per-user random salt) — never in plain text.
+- **Sign up** — creates an account, then requires a **5-digit verification code** sent to the email address before the account is activated.
+- **Forgot password** — sends a reset code to the registered email; enter the code and a new password to reset.
+- **Persistent sessions** — once signed in you stay signed in, even after closing and reopening the app, until you click **Sign Out** (top-right of the dashboard). Sessions are token-based and stored locally.
+
+### Email Verification Setup (Gmail SMTP)
+
+Verification and reset codes are delivered over **Gmail SMTP**. Configure it once under **Settings → Email / SMTP**:
+
+1. Enable **2-Step Verification** on your Google account
+2. Create an **App Password** at [myaccount.google.com/apppasswords](https://myaccount.google.com/apppasswords) (choose "Mail")
+3. In ArchForge Pro: **Settings → Email / SMTP** → enter your Gmail address and the 16-character App Password
+4. Click **Send Test Email** — on success the settings are saved automatically
+
+> **Dev mode:** if no SMTP credentials are configured, the app runs in development mode and shows the verification code on-screen instead of emailing it — so you can test the full flow without a mail server.
+
+Credentials are stored in the local SQLite database (gitignored) and are never committed or sent anywhere except Gmail's SMTP server.
 
 ---
 
@@ -167,6 +218,8 @@ Share the zip file — anyone can extract it and run `ArchForgePro.exe` without 
 | Layer | Technology |
 |---|---|
 | UI | PyQt6 |
+| Auth | PBKDF2-SHA256 password hashing, token sessions |
+| Email | Gmail SMTP (`smtplib` + STARTTLS) |
 | Database | SQLite — WAL mode, indexed foreign keys |
 | Charts (UI) | Matplotlib — theme-aware, vivid palette |
 | Charts (PDF) | Matplotlib → PNG → ReportLab |
@@ -185,16 +238,19 @@ Share the zip file — anyone can extract it and run `ArchForgePro.exe` without 
 ArchForge-Pro/
 ├── app/
 │   ├── controllers/        # Estimation engine, BOQ, report generation
-│   ├── models/             # SQLite models (projects, estimates, BOQ, expenses...)
+│   ├── models/             # SQLite models (users, sessions, projects, estimates...)
 │   ├── views/
+│   │   ├── auth/           # Login, registration, verification, password reset
 │   │   ├── pages/          # Dashboard, Estimator, BOQ, Expenses, Timeline...
 │   │   └── dialogs/        # Project, expense, material dialogs
 │   ├── ml/                 # XGBoost predictor + trainer
-│   ├── utils/              # Animated bg, charts, paths, formatters
+│   ├── utils/              # Node-field bg, email sender, fonts, brand icons, paths
 │   └── resources/
 │       ├── styles/         # dark_theme.qss, light_theme.qss
+│       ├── fonts/          # Press Start 2P (pixel font, OFL)
 │       └── images/         # App icon, atlas image
-├── main.py                 # Entry point + splash screen
+├── config.example.py       # SMTP config template (copy to config.py — gitignored)
+├── main.py                 # Entry point + splash + auth routing
 ├── build.bat               # PyInstaller build script
 ├── installer.iss           # Inno Setup installer config
 └── requirements.txt
