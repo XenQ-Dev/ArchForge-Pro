@@ -1,0 +1,23 @@
+# ArchForge Pro — Python dependencies
+# Install with: pip install -r requirements.txt
+
+# UI
+PyQt6>=6.6.0
+
+# Data & ML
+pandas>=2.1.0
+numpy>=1.26.0
+scikit-learn>=1.4.0
+xgboost>=2.0.0
+
+# PDF Reports
+reportlab>=4.1.0
+
+# Excel Export
+openpyxl>=3.1.0
+
+# Charts (embedded in PyQt6 via QtAgg backend)
+matplotlib>=3.8.0
+
+# Packaging
+pyinstaller>=6.3.0

@@ -1,0 +1,34 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+*.egg-info/
+
+# Build output
+dist/
+build/
+*.spec
+
+# Database (user data — don't commit)
+data/archforge.db
+data/
+
+# Logs
+logs/
+
+# ML models (large binaries — regenerate with trainer.py)
+ml_models/
+
+# IDE
+.vscode/
+.idea/
+*.suo
+
+# OS
+Thumbs.db
+.DS_Store
+
+# Installer output
+Output/
