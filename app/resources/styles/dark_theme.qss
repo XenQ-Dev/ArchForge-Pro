@@ -22,6 +22,7 @@ QLabel#stat_label { font-size:10px; font-family:"Courier New",monospace; color:#
 
 /* ── Page headers ── */
 #content_area { background-color:#000000; }
+#top_bar { background-color:#000000; border-bottom:1px solid #1a1a1a; color:#ffffff; }
 QLabel#section_title { font-size:18px; font-weight:700; font-family:"Courier New",monospace; color:#ffffff; letter-spacing:4px; }
 QLabel#section_subtitle { font-size:11px; font-family:"Courier New",monospace; color:#aaaaaa; letter-spacing:2px; }
 QLabel#form_label { font-size:11px; font-family:"Courier New",monospace; color:#aaaaaa; letter-spacing:1px; }

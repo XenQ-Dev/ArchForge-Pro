@@ -57,7 +57,7 @@ def send_email(to: str, subject: str, body_html: str) -> bool:
         with smtplib.SMTP(cfg["host"], cfg["port"], timeout=10) as smtp:
             smtp.ehlo()
             smtp.starttls()
-            smtp.login(cfg["user"], cfg["password"])
+            smtp.login(cfg["user"], cfg["password"].replace(" ", ""))
             smtp.sendmail(cfg["user"], to, msg.as_string())
         logger.info("Email sent to %s [%s]", to, subject)
         return True
@@ -68,6 +68,30 @@ def send_email(to: str, subject: str, body_html: str) -> bool:
 
 def smtp_configured() -> bool:
     return _load_smtp_config() is not None
+
+
+def send_test(host: str, port: int, user: str, password: str, to: str) -> tuple[bool, str]:
+    """Send a live test email with explicit credentials. Returns (ok, error_message)."""
+    body = (
+        "<div style='font-family:monospace;background:#000;color:#fff;padding:24px'>"
+        "<h2 style='letter-spacing:2px'>ARCHFORGE PRO</h2>"
+        "<p>Your Gmail SMTP settings are working. Verification codes will be "
+        "delivered to user inboxes from this address.</p></div>"
+    )
+    msg = MIMEMultipart("alternative")
+    msg["Subject"] = "ArchForge Pro — SMTP test"
+    msg["From"]    = user
+    msg["To"]      = to
+    msg.attach(MIMEText(body, "html", "utf-8"))
+    try:
+        with smtplib.SMTP(host, int(port), timeout=15) as smtp:
+            smtp.ehlo()
+            smtp.starttls()
+            smtp.login(user, password.replace(" ", ""))
+            smtp.sendmail(user, to, msg.as_string())
+        return True, ""
+    except Exception as exc:
+        return False, str(exc)
 
 
 # ── Email templates ───────────────────────────────────────────────────────────

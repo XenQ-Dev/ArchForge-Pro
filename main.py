@@ -157,6 +157,10 @@ def main() -> None:
     app.setOrganizationName("ArchForge")
     app.setApplicationVersion("1.0.0")
 
+    # Register bundled pixel font (Press Start 2P)
+    from app.utils.fonts import pixel_family
+    pixel_family()
+
     splash = _make_splash()
     splash.show()
     app.processEvents()
@@ -178,37 +182,39 @@ def main() -> None:
     def _open_main(u: dict, t: str) -> None:
         from app.views.main_window import MainWindow
         set_current_user(u, t)
-        win = MainWindow(user=u, token=t)
-        win.signed_out.connect(lambda: _open_login(win))
+        try:
+            win = MainWindow(user=u, token=t)
+        except Exception as exc:
+            logger.error("MainWindow failed to open: %s", exc, exc_info=True)
+            return
+        win.signed_out.connect(lambda: _open_login())
         app._main_win = win
-        splash.finish(win)
         win.show()
         win.raise_()
 
-    def _open_login(close_first=None) -> None:
-        if close_first:
-            close_first.close()
+    def _open_login() -> None:
         from app.views.auth.login_window import LoginWindow
         login = LoginWindow()
-        login.login_success.connect(
-            lambda u, t: _on_login_success(login, u, t)
-        )
+        login.login_success.connect(lambda u, t: _on_login_success(login, u, t))
         app._login_win = login
-        splash.finish(login)
         login.show()
 
-    def _on_login_success(login_win: "LoginWindow", u: dict, t: str) -> None:
+    def _on_login_success(login_win, u: dict, t: str) -> None:
         set_setting("active_session", t)
         login_win.close()
         _open_main(u, t)
 
-    if user:
-        logger.info("Resuming session for %s", user["email"])
-        QTimer.singleShot(1800, lambda: _open_main(user, token))
-    else:
-        if token:
-            set_setting("active_session", "")  # clear stale token
-        QTimer.singleShot(1800, _open_login)
+    def _after_splash() -> None:
+        if user:
+            logger.info("Resuming session for %s", user["email"])
+            _open_main(user, token)
+        else:
+            if token:
+                set_setting("active_session", "")
+            _open_login()
+        splash.close()
+
+    QTimer.singleShot(1800, _after_splash)
 
     sys.exit(app.exec())
 

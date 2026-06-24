@@ -87,6 +87,40 @@ class SettingsPage(QWidget):
 
         lay.addWidget(app_group)
 
+        # ── Email / SMTP (verification codes) ───────────────────────────────
+        smtp_group = QGroupBox("Email / SMTP  —  sends verification codes")
+        smtp_form = QFormLayout(smtp_group)
+
+        self._smtp_host = QLineEdit()
+        self._smtp_port = QLineEdit()
+        self._smtp_user = QLineEdit()
+        self._smtp_user.setPlaceholderText("your-account@gmail.com")
+        self._smtp_pass = QLineEdit()
+        self._smtp_pass.setEchoMode(QLineEdit.EchoMode.Password)
+        self._smtp_pass.setPlaceholderText("16-char Gmail App Password")
+        smtp_form.addRow("SMTP Host:", self._smtp_host)
+        smtp_form.addRow("SMTP Port:", self._smtp_port)
+        smtp_form.addRow("Gmail Address:", self._smtp_user)
+        smtp_form.addRow("App Password:", self._smtp_pass)
+
+        help_lbl = QLabel(
+            "Gmail requires an App Password (not your normal password):\n"
+            "1. Enable 2-Step Verification on your Google account\n"
+            "2. Visit  myaccount.google.com/apppasswords\n"
+            "3. Create a password for \"Mail\" and paste the 16 characters above\n"
+            "Leave blank to run in dev mode (codes shown on-screen instead of emailed)."
+        )
+        help_lbl.setObjectName("section_subtitle")
+        help_lbl.setWordWrap(True)
+        smtp_form.addRow("", help_lbl)
+
+        test_btn = QPushButton("Send Test Email")
+        test_btn.setObjectName("btn_secondary")
+        test_btn.clicked.connect(self._send_test_email)
+        smtp_form.addRow("", test_btn)
+
+        lay.addWidget(smtp_group)
+
         # Save button
         save_btn = QPushButton("Save Settings")
         save_btn.clicked.connect(self._save)
@@ -117,6 +151,10 @@ class SettingsPage(QWidget):
         idx = self._theme_combo.findText(theme)
         if idx >= 0:
             self._theme_combo.setCurrentIndex(idx)
+        self._smtp_host.setText(s.get("smtp_host", "smtp.gmail.com"))
+        self._smtp_port.setText(s.get("smtp_port", "587"))
+        self._smtp_user.setText(s.get("smtp_user", ""))
+        self._smtp_pass.setText(s.get("smtp_pass", ""))
 
     def _save(self) -> None:
         set_setting("company_name", self._company_name.text())
@@ -128,4 +166,41 @@ class SettingsPage(QWidget):
         set_setting("equipment_pct", str(self._equipment_spin.value()))
         set_setting("contractor_pct", str(self._margin_spin.value()))
         set_setting("theme", self._theme_combo.currentText())
+        set_setting("smtp_host", self._smtp_host.text().strip())
+        set_setting("smtp_port", self._smtp_port.text().strip() or "587")
+        set_setting("smtp_user", self._smtp_user.text().strip())
+        set_setting("smtp_pass", self._smtp_pass.text().replace(" ", "").strip())
         QMessageBox.information(self, "Saved", "Settings saved successfully!")
+
+    def _send_test_email(self) -> None:
+        host = self._smtp_host.text().strip() or "smtp.gmail.com"
+        port = self._smtp_port.text().strip() or "587"
+        user = self._smtp_user.text().strip()
+        pwd  = self._smtp_pass.text().strip()
+        if not user or not pwd:
+            QMessageBox.warning(self, "Missing Details",
+                                "Enter your Gmail address and App Password first.")
+            return
+        from app.utils.email_sender import send_test
+        QMessageBox.information(self, "Sending", f"Sending a test email to {user} …")
+        ok, err = send_test(host, port, user, pwd, user)
+        if ok:
+            # Auto-save working credentials so registration emails work immediately
+            set_setting("smtp_host", host)
+            set_setting("smtp_port", port)
+            set_setting("smtp_user", user)
+            set_setting("smtp_pass", pwd.replace(" ", ""))
+            QMessageBox.information(
+                self, "Success",
+                f"Test email sent to {user} and settings saved automatically.\n\n"
+                "New-user verification codes will now be emailed via this account."
+            )
+        else:
+            QMessageBox.critical(
+                self, "Failed",
+                f"Could not send email:\n\n{err}\n\n"
+                "Common causes:\n"
+                "• Using your normal password instead of an App Password\n"
+                "• 2-Step Verification not enabled on your Google account\n"
+                "• Typo in the email or App Password"
+            )

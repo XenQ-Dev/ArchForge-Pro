@@ -160,6 +160,14 @@ class MainWindow(QMainWindow):
 
         lay.addWidget(self._build_sidebar())
 
+        # Content area: top bar + stack
+        content = QWidget()
+        content.setObjectName("content_area")
+        content_lay = QVBoxLayout(content)
+        content_lay.setContentsMargins(0, 0, 0, 0)
+        content_lay.setSpacing(0)
+        content_lay.addWidget(self._build_top_bar())
+
         self.stack = QStackedWidget()
         self.stack.setMouseTracking(True)
         for _, label, PageClass in NAV_ITEMS:
@@ -172,7 +180,8 @@ class MainWindow(QMainWindow):
             self._wrappers.append(w)
             self.stack.addWidget(w)
 
-        lay.addWidget(self.stack, stretch=1)
+        content_lay.addWidget(self.stack, stretch=1)
+        lay.addWidget(content, stretch=1)
 
         self._sb = QStatusBar()
         self._sb.setFixedHeight(24)
@@ -247,10 +256,6 @@ class MainWindow(QMainWindow):
 
         lay.addWidget(_HSep())
 
-        # User profile
-        lay.addWidget(self._build_user_profile())
-        lay.addWidget(_HSep())
-
         # Atlas animation — centred, no extra wrapper padding
         self._sphere = SphereWidget()
         self._sphere.setContentsMargins(0, 8, 0, 8)
@@ -273,6 +278,43 @@ class MainWindow(QMainWindow):
         scroll.setWidget(inner)
         outer_lay.addWidget(scroll)
         return outer
+
+    def _build_top_bar(self) -> QWidget:
+        bar = QWidget()
+        bar.setObjectName("top_bar")
+        bar.setFixedHeight(40)
+        lay = QHBoxLayout(bar)
+        lay.setContentsMargins(0, 0, 16, 0)
+        lay.setSpacing(0)
+        lay.addStretch()
+
+        name = self._user.get("display_name", "")
+        initials = "".join(p[0].upper() for p in name.split()[:2]) or "?"
+
+        avatar = _AvatarLabel(initials, size=26)
+        lay.addWidget(avatar)
+        lay.addSpacing(8)
+
+        name_lbl = QLabel(name)
+        name_lbl.setStyleSheet(
+            "font-family:'Courier New',monospace; font-size:10px; "
+            "font-weight:700; letter-spacing:1px;"
+        )
+        lay.addWidget(name_lbl)
+        lay.addSpacing(16)
+
+        signout_btn = QPushButton("SIGN OUT")
+        signout_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        signout_btn.setFixedHeight(24)
+        signout_btn.setStyleSheet(
+            "QPushButton { background:transparent; border:1px solid #333333; "
+            "font-family:'Courier New',monospace; font-size:9px; letter-spacing:2px; "
+            "padding:0 10px; }"
+            "QPushButton:hover { border-color:#cc3333; color:#cc3333; }"
+        )
+        signout_btn.clicked.connect(self._sign_out)
+        lay.addWidget(signout_btn)
+        return bar
 
     def _build_user_profile(self) -> QWidget:
         w = QWidget()
