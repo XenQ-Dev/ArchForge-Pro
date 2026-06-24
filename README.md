@@ -56,21 +56,6 @@ ArchForge Pro is a **fully offline** Windows desktop application for Indian cons
 
 <div align="center">
 
-**Sign In — Pixel UI with Interactive Constellation Background**
-![Sign In](screenshots/signin.png)
-
-<br/>
-
-**Sign Up — Create Account**
-![Sign Up](screenshots/signup.png)
-
-<br/>
-
-**Email Verification — 5-digit OTP**
-![Verification](screenshots/verification.png)
-
-<br/>
-
 **Dark Mode — Dashboard**
 ![Dashboard](screenshots/dashboard.png)
 
@@ -88,6 +73,22 @@ ArchForge Pro is a **fully offline** Windows desktop application for Indian cons
 
 **PDF Report — Material Schedule & Rate Analysis**
 ![Report Page 2](screenshots/report_page2.png)
+
+<br/>
+
+**Sign In — Pixel UI with Interactive Constellation Background**
+![Sign In](screenshots/signin.png)
+
+<br/>
+
+**Sign Up — Create Account**
+![Sign Up](screenshots/signup.png)
+
+<br/>
+
+**Email Verification — 5-digit OTP**
+
+<img src="screenshots/verification.png" width="384" alt="Email Verification"/>
 
 </div>
 
