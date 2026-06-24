@@ -1,195 +1,210 @@
+<div align="center">
+
+<img src="app/resources/images/icon.ico" width="80" alt="ArchForge Pro Logo"/>
+
 # ArchForge Pro
 
-**ArchForge Pro codebase — construction cost estimation for the Indian market**
+**Construction Cost Estimation Platform for the Indian Market**
 
-The estimation platform that runs the whole project — intake, cost modelling, BOQ generation, expense tracking, phase scheduling, ML prediction, and branded PDF delivery — on a desktop-first offline engine built for Indian construction professionals.
+[![Python](https://img.shields.io/badge/Python-3.11+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
+[![PyQt6](https://img.shields.io/badge/PyQt6-Desktop-41CD52?style=for-the-badge&logo=qt&logoColor=white)](https://riverbankcomputing.com/software/pyqt/)
+[![SQLite](https://img.shields.io/badge/SQLite-Database-003B57?style=for-the-badge&logo=sqlite&logoColor=white)](https://sqlite.org)
+[![License](https://img.shields.io/badge/License-MIT-yellow?style=for-the-badge)](LICENSE)
+[![Platform](https://img.shields.io/badge/Platform-Windows-0078D6?style=for-the-badge&logo=windows&logoColor=white)](https://github.com/XenQ-Dev/ArchForge-Pro/releases)
 
-Drop the project specs. Define the scope. Run the rule-based estimator. Generate the BOQ. Track real expenses against the estimate. Let the ML engine cross-check the numbers. Send the professional report.
+<br/>
+
+> *Drop the project specs. Define the scope. Run the estimator. Generate the BOQ.*
+> *Track real expenses. Let the ML engine cross-check. Send the professional report.*
+
+<br/>
+
+[**⬇ Download**](https://github.com/XenQ-Dev/ArchForge-Pro/releases) • [**Features**](#features) • [**Getting Started**](#getting-started) • [**Build the EXE**](#build-the-exe)
+
+</div>
+
+---
+
+## What is ArchForge Pro?
+
+ArchForge Pro is a **fully offline** Windows desktop application for Indian construction professionals. It handles the entire estimation workflow — from project intake to branded PDF report delivery — without requiring any internet connection, cloud subscription, or external API.
+
+Built as a Final Year Computer Engineering project, it combines a rule-based estimation engine with an XGBoost ML model, giving estimators both structured rates and a data-driven cross-check in one tool.
 
 ---
 
 ## Features
 
-### 1. Rule-based cost estimation engine — not a spreadsheet bolted on
-
-ArchForge Pro keeps estimation logic in `app/controllers/estimation_engine.py`, where it shares cost intelligence, labour norms, quality multipliers, GST schedules, and material rate tables with the BOQ generator, variance engine, and ML predictor. The estimator reads project parameters, applies Indian Standard rates by construction quality (Economy / Standard / Premium / Luxury), runs material quantity schedules, layers labour and equipment percentages, applies contractor margin, and computes GST — all in one pass.
-
-No manual formulas. No broken cell references. No hidden assumptions.
-
-### 2. ML cost prediction — cross-check your estimate
-
-A trained XGBoost model lives alongside a rule-based engine in `app/ml/`. Feed it a project's built-up area, floor count, quality tier, and type — it returns an independent predicted cost and confidence range. Use it to sanity-check the rule-based output or to price projects where detailed BOQ data isn't yet available.
-
-Local inference only. No cloud, no API key, no cost per call.
-
-### 3. BOQ generator — linked to the estimate
-
-Generate a full Bill of Quantities from a saved estimate with one click. Line items carry description, quantity, unit, rate, and amount. Export to PDF (ReportLab, branded layout with charts) or Excel (openpyxl, formatted with header styles and column widths). BOQ items stay linked to the estimate they came from — change the estimate, regenerate the BOQ.
-
-### 4. Expense tracking — actuals against the budget
-
-Log every site expense with date, category, description, amount, and receipt reference. The variance engine computes actual vs. estimated in real time — by component (material, labour, equipment, contractor) and in aggregate. Monthly spend trends surface in the Expense Report automatically.
-
-### 5. Phase timeline — nine standard construction phases
-
-Every project gets nine default phases out of the box: Foundation → Structure → Brickwork → Plumbing → Electrical → Plastering → Flooring → Painting → Finishing & Handover. Track planned and actual start/end dates, completion percentage, and status per phase. The Project Summary Report renders a Gantt chart from this data automatically.
-
-### 6. Five professional PDF reports — with embedded charts
-
-Hit Generate and ArchForge Pro produces a branded, chart-rich PDF. No third-party service, no internet connection required.
-
-| Report | Charts included |
-|---|---|
-| Cost Estimate Report | Pie (cost distribution) + Bar (component amounts) + Rate analysis |
-| BOQ Report | Pie + Bar by work category |
-| Expense Report | Pie (by category) + Line (monthly trend) |
-| Variance Analysis | Donut (budget utilisation) + Bar (budget vs actual) + Component table |
-| Project Summary | Pie + Bar + Phase table + Gantt chart |
-
-### 7. Materials database
-
-Maintain a catalogue of materials with unit rates, categories, and suppliers. The estimator draws from this catalogue when computing material costs. Update rates once — every future estimate picks up the change.
-
-### 8. Offline-first, no subscriptions
-
-ArchForge Pro runs entirely on the local machine. SQLite with WAL mode and indexed foreign keys. No cloud sync, no API calls, no recurring cost. The packaged `.exe` ships with the database, ML models, stylesheets, and all resources bundled by PyInstaller.
+| | Feature | Description |
+|---|---|---|
+| 🏗️ | **Rule-based Estimator** | Applies Indian Standard rates by quality tier (Economy → Luxury), computes material quantities, labour, equipment, GST in one pass |
+| 🤖 | **ML Cost Prediction** | XGBoost model trained on Indian project data — independent cost check with confidence range |
+| 📋 | **BOQ Generator** | Full Bill of Quantities from a saved estimate, exportable to PDF and Excel |
+| 💸 | **Expense Tracker** | Log actuals with category and receipt ref, variance computed against estimate in real time |
+| 📅 | **Phase Timeline** | Nine standard construction phases with planned/actual dates, completion %, and Gantt chart |
+| 📊 | **5 PDF Reports** | Cost Estimate, BOQ, Expense, Variance Analysis, Project Summary — all with embedded charts |
+| 🧱 | **Materials Database** | Rate catalogue by category and supplier |
+| 🌓 | **Dark / Light Theme** | Brutalist terminal aesthetic, fully theme-aware charts and UI |
+| ⌨️ | **Keyboard Shortcuts** | Ctrl+N, Ctrl+F, Ctrl+S, Ctrl+Enter, double-click to edit — built for speed |
+| 📦 | **Fully Offline** | SQLite, local ML inference, no cloud, no subscriptions |
 
 ---
 
-## Run ArchForge Pro
+## Screenshots
 
-### From source
+> *Dark mode — Dashboard*
 
-You need Python 3.11+ and pip.
+> *Light mode — Cost Estimator*
+
+> *PDF Report with embedded charts*
+
+---
+
+## Getting Started
+
+### Option A — Download the EXE *(recommended)*
+
+1. Go to [**Releases**](https://github.com/XenQ-Dev/ArchForge-Pro/releases)
+2. Download `ArchForgePro_v1.0.0.zip`
+3. Extract the zip anywhere
+4. Run `ArchForgePro.exe`
+
+No Python needed. No installation. Just extract and run.
+
+---
+
+### Option B — Run from source
+
+**Requirements:** Python 3.11+
 
 ```bash
-git clone https://github.com/your-username/archforge-pro
-cd archforge-pro
+git clone https://github.com/XenQ-Dev/ArchForge-Pro.git
+cd ArchForge-Pro
 python -m venv .venv
-.venv\Scripts\activate        # Windows
+.venv\Scripts\activate
 pip install -r requirements.txt
 python main.py
 ```
 
-### From the installer
-
-Download the latest `ArchForgePro_Setup.exe` from Releases. Run it — no admin rights required (`PrivilegesRequired=lowest`). The installer places the app in `%LocalAppData%\ArchForgePro` and creates a Start Menu shortcut.
-
 ---
 
-## Build from source
+## Build the EXE
 
-You need PyInstaller installed in the venv. Run:
+Want to build the executable yourself? Follow these steps.
 
-```bat
+### Step 1 — Install dependencies
+
+```powershell
+python -m venv .venv
+.venv\Scripts\activate
+pip install -r requirements.txt
+pip install pyinstaller
+```
+
+### Step 2 — Run the build script
+
+```powershell
 build.bat
 ```
 
-This produces `dist\ArchForgePro\` with the self-contained executable. To create the Windows installer, open `installer.iss` in Inno Setup 6 and compile.
+This runs PyInstaller and produces the app inside:
+
+```
+dist\
+  ArchForgePro\
+    ArchForgePro.exe   ← your executable
+    ...                ← all bundled resources
+```
+
+### Step 3 — Zip and share
+
+```powershell
+Compress-Archive -Path "dist\ArchForgePro" -DestinationPath "ArchForgePro_v1.0.0.zip"
+```
+
+Share the zip file — anyone can extract it and run `ArchForgePro.exe` without installing Python.
+
+### Optional — Create a Windows Installer
+
+1. Install [Inno Setup 6](https://jrsoftware.org/isinfo.php)
+2. Open `installer.iss` in Inno Setup
+3. Press **Compile** (Ctrl+F9)
+4. A single `ArchForgePro_Setup.exe` installer is produced in the `Output\` folder
 
 ---
 
-## What's in the box
+## Keyboard Shortcuts
 
-| Area | Capabilities |
+| Shortcut | Action |
 |---|---|
-| Projects | Create, edit, delete, search, filter by status, sort by any column, double-click to edit |
-| Cost Estimator | Rule-based engine, quality-tiered rates, labour/equipment/GST parameters, Ctrl+Enter to calculate, Ctrl+S to save |
-| BOQ | Generate from estimate, itemised quantities, PDF + Excel export |
-| Expenses | Ledger with categories and receipt refs, monthly trend, variance against estimate |
-| Timeline | Nine standard phases, planned vs actual dates, completion %, Gantt in reports |
-| Reports | Five PDF report types with embedded matplotlib charts, branded header |
-| ML Prediction | XGBoost model, local inference, confidence range output |
-| Materials | Rate catalogue by category and supplier |
-| Settings | Company name, address, GST number, contact details for report headers |
-| Theme | Dark mode (default) and light mode, brutalist monospace terminal aesthetic |
+| `Ctrl + N` | New project |
+| `Ctrl + F` | Focus search |
+| `Ctrl + Enter` | Calculate estimate |
+| `Ctrl + S` | Save estimate |
+| `Double-click` | Edit project row |
+| `Delete` | Delete selected project |
+| `Escape` | Clear search |
 
 ---
 
-## Inside the codebase
-
-```
-app/
-  controllers/
-    estimation_engine.py   Rule-based cost estimator
-    report_controller.py   PDF generation with matplotlib charts
-  models/
-    database.py            SQLite setup, WAL mode, indexes
-    project_model.py       Projects CRUD + dashboard stats
-    estimate_model.py      Estimates CRUD
-    boq_model.py           BOQ CRUD
-    expense_model.py       Expenses CRUD + monthly aggregation
-    timeline_model.py      Phases CRUD + defaults
-    material_model.py      Materials catalogue
-    settings_model.py      App settings
-  views/
-    main_window.py         Sidebar, nav, theme toggle, global mouse tracker
-    pages/                 One file per page (dashboard, projects, estimator, ...)
-    dialogs/               Project dialog, expense dialog, ...
-  ml/
-    predictor.py           XGBoost inference
-    trainer.py             Model training pipeline
-  utils/
-    paths.py               Dev vs PyInstaller frozen path resolver
-    animated_bg.py         Dot-grid cursor animation (cached grid, theme-aware)
-    sphere_widget.py       Atlas globe (QPainter CompositionMode_Difference)
-    chart_widget.py        Matplotlib dashboard charts with vivid palette
-    formatters.py          INR formatting, date formatting
-  resources/
-    styles/
-      dark_theme.qss       Brutalist terminal dark theme
-      light_theme.qss      High-contrast light theme (pure black text)
-    images/                App icon, atlas image
-main.py                    Splash screen + entry point
-build.bat                  PyInstaller build script
-installer.iss              Inno Setup installer script
-```
-
----
-
-## Tech stack
+## Tech Stack
 
 | Layer | Technology |
 |---|---|
-| UI framework | PyQt6 |
-| Database | SQLite (WAL mode, parameterized queries, `sqlite3.Row`) |
-| Charts (UI) | Matplotlib (module-level theme state, vivid palette) |
-| Charts (PDF) | Matplotlib → PNG → ReportLab embed |
-| PDF generation | ReportLab |
-| Excel export | openpyxl |
-| ML | Scikit-learn, XGBoost |
+| UI | PyQt6 |
+| Database | SQLite — WAL mode, indexed foreign keys |
+| Charts (UI) | Matplotlib — theme-aware, vivid palette |
+| Charts (PDF) | Matplotlib → PNG → ReportLab |
+| PDF Reports | ReportLab |
+| Excel Export | openpyxl |
+| ML Model | Scikit-learn, XGBoost |
 | Packaging | PyInstaller (`--onedir --windowed`) |
 | Installer | Inno Setup 6 |
 | Language | Python 3.11 |
 
 ---
 
-## Keyboard shortcuts
+## Project Structure
 
-| Shortcut | Action |
+```
+ArchForge-Pro/
+├── app/
+│   ├── controllers/        # Estimation engine, BOQ, report generation
+│   ├── models/             # SQLite models (projects, estimates, BOQ, expenses...)
+│   ├── views/
+│   │   ├── pages/          # Dashboard, Estimator, BOQ, Expenses, Timeline...
+│   │   └── dialogs/        # Project, expense, material dialogs
+│   ├── ml/                 # XGBoost predictor + trainer
+│   ├── utils/              # Animated bg, charts, paths, formatters
+│   └── resources/
+│       ├── styles/         # dark_theme.qss, light_theme.qss
+│       └── images/         # App icon, atlas image
+├── main.py                 # Entry point + splash screen
+├── build.bat               # PyInstaller build script
+├── installer.iss           # Inno Setup installer config
+└── requirements.txt
+```
+
+---
+
+## Reports Preview
+
+Each PDF report includes embedded charts generated by Matplotlib:
+
+| Report | What's inside |
 |---|---|
-| `Ctrl+N` | New project (Projects page) |
-| `Ctrl+F` | Focus search bar (Projects page) |
-| `Ctrl+Enter` | Calculate estimate (Estimator page) |
-| `Ctrl+S` | Save estimate (Estimator page) |
-| `Double-click row` | Edit project |
-| `Enter` | Edit selected project |
-| `Delete` | Delete selected project |
-| `Escape` | Clear search / deselect |
-| `D` / `L` | Switch to Dark / Light mode (sidebar) |
+| **Cost Estimate** | KPI summary + Pie + Bar chart + Rate per sq.ft + Material schedule |
+| **BOQ** | Category pie + bar + full itemised BOQ table |
+| **Expense Report** | Category pie + Monthly trend line + Itemised ledger |
+| **Variance Analysis** | Budget utilisation donut + Budget vs actual bar + Component breakdown |
+| **Project Summary** | Cost pie + Budget tracker + Phase table + Gantt chart |
 
 ---
 
-## Status
+<div align="center">
 
-ArchForge Pro is a feature-complete desktop application for Indian construction cost estimation. The core workflow — project intake, rule-based estimation, BOQ generation, expense tracking, phase timeline, ML prediction, and PDF report delivery — is fully implemented and packaged as a Windows executable.
+Built for Indian construction professionals · Offline · No subscriptions · No cloud
 
-Areas that could extend further: integration with live material rate APIs (currently static catalogue), cloud sync for multi-device use, and mobile companion for on-site expense logging.
+**Copyright © 2026 Gagan Naik**
 
----
-
-## License
-
-ArchForge Pro — Final Year Computer Engineering Project.  
-Copyright © 2026 Gagan Naik.  
-Built with ArchForge Pro, PyQt6, ReportLab, Matplotlib, and XGBoost.
+</div>
