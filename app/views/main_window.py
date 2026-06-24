@@ -271,11 +271,6 @@ class MainWindow(QMainWindow):
         aw.addStretch()
         lay.addWidget(atlas_wrap)
 
-        lay.addWidget(_HSep())
-
-        coord = QLabel("  LAT: 18.5204°  ·  LNG: 73.8567°")
-        coord.setObjectName("sidebar_meta")
-        lay.addWidget(coord)
         lay.addStretch()
 
         scroll.setWidget(inner)
