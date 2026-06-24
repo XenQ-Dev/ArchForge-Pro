@@ -53,6 +53,7 @@ def get_project(project_id: int) -> Optional[dict]:
 
 def update_project(project_id: int, data: dict) -> None:
     data["id"] = project_id
+    data["_uid"] = _uid()
     with get_connection() as conn:
         conn.execute(
             """UPDATE projects SET
@@ -62,7 +63,7 @@ def update_project(project_id: int, data: dict) -> None:
                num_floors=:num_floors, construction_quality=:construction_quality,
                start_date=:start_date, expected_completion=:expected_completion,
                status=:status, notes=:notes
-               WHERE id=:id AND user_id=""" + str(_uid()),
+               WHERE id=:id AND user_id=:_uid""",
             data,
         )
         conn.commit()

@@ -10,7 +10,7 @@ sys.path.insert(0, str(Path(__file__).parent))
 
 from PyQt6.QtWidgets import QApplication, QSplashScreen
 from PyQt6.QtCore import Qt, QTimer, QRect, QPoint
-from PyQt6.QtGui import QPixmap, QFont, QColor, QPainter, QPen, QFontMetrics
+from PyQt6.QtGui import QPixmap, QFont, QColor, QPainter, QPen
 
 from app.models.database import init_database
 from app.utils.paths import resource, data

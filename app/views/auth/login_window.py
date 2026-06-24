@@ -38,9 +38,8 @@ QFrame#card {{
 QLabel#h1   {{ color:#ffffff; font-family:"{PIX}"; font-size:17px; }}
 QLabel#sub  {{ color:#8a8a8a; font-family:"{PIX}"; font-size:8px; line-height:160%; }}
 QLabel#lbl  {{ color:#ffffff; font-family:"{PIX}"; font-size:9px; }}
-QLabel#or   {{ color:#7a7a7a; font-family:"{PIX}"; font-size:8px; }}
+QLabel#or   {{ color:#b0b0b0; font-family:"{PIX}"; font-size:9px; padding:0 6px; }}
 QLabel#err  {{ color:#e0564f; font-family:"{PIX}"; font-size:7px; }}
-QLabel#foot {{ color:#6a6a6a; font-family:"{PIX}"; font-size:8px; }}
 
 QLineEdit {{
     background-color:#2b2b2b;
@@ -386,7 +385,7 @@ class LoginWindow(QMainWindow):
         cl.addSpacing(16)
 
         # Or continue with
-        orr = QHBoxLayout(); orr.setSpacing(10)
+        orr = QHBoxLayout(); orr.setSpacing(14)
         orr.addWidget(_hline(), 1)
         orr.addWidget(_lbl("Or continue with", "or"))
         orr.addWidget(_hline(), 1)
@@ -443,16 +442,6 @@ class LoginWindow(QMainWindow):
         hc = QHBoxLayout(); hc.addStretch(1); hc.addWidget(card); hc.addStretch(1)
         page.addLayout(hc)
         page.addStretch(1)
-
-        # ── footer (outside card) ───────────────────────────────────────────
-        f1 = _lbl("Terms of Service", "foot", center=True)
-        f2 = _lbl("and Privacy Policy.", "foot", center=True)
-        f1.setStyleSheet("text-decoration:underline;")
-        f2.setStyleSheet("text-decoration:underline;")
-        page.addWidget(f1)
-        page.addSpacing(3)
-        page.addWidget(f2)
-        page.addSpacing(26)
 
     def resizeEvent(self, event):  # type: ignore[override]
         super().resizeEvent(event)
