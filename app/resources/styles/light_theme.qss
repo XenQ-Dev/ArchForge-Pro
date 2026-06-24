@@ -69,8 +69,8 @@ QDateEdit::up-button:hover, QSpinBox::up-button:hover, QDoubleSpinBox::up-button
 QDateEdit::down-button:hover, QSpinBox::down-button:hover, QDoubleSpinBox::down-button:hover { background-color:#000000; }
 
 /* ── GroupBox ── */
-QGroupBox { background-color:#ffffff; border:2px solid #000000; border-radius:0px; margin-top:20px; padding:16px 14px 14px 14px; font-family:"Courier New",monospace; font-size:10px; font-weight:700; color:#000000; letter-spacing:2px; }
-QGroupBox::title { subcontrol-origin:margin; subcontrol-position:top left; padding:3px 10px; left:10px; color:#000000; background-color:#ffffff; font-size:11px; letter-spacing:2px; font-weight:700; }
+QGroupBox { background-color:#ffffff; border:2px solid #000000; border-radius:0px; margin-top:24px; padding-top:14px; padding-left:14px; padding-right:14px; padding-bottom:14px; font-family:"Courier New",monospace; font-size:11px; font-weight:700; color:#000000; letter-spacing:2px; }
+QGroupBox::title { subcontrol-origin:margin; subcontrol-position:top left; left:12px; top:-1px; padding:0px 8px; color:#000000; background-color:#ffffff; font-size:11px; letter-spacing:2px; font-weight:700; }
 
 /* ── Tabs ── */
 QTabWidget::pane { border:1px solid #000000; border-radius:0px; background-color:#ffffff; top:-1px; }
