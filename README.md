@@ -29,7 +29,6 @@
 
 ArchForge Pro is a **fully offline** Windows desktop application for Indian construction professionals. It handles the entire estimation workflow — from project intake to branded PDF report delivery — without requiring any internet connection, cloud subscription, or external API.
 
-Built as a Final Year Computer Engineering project, it combines a rule-based estimation engine with an XGBoost ML model, giving estimators both structured rates and a data-driven cross-check in one tool.
 
 ---
 
