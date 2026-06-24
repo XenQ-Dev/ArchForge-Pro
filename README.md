@@ -52,11 +52,27 @@ Built as a Final Year Computer Engineering project, it combines a rule-based est
 
 ## Screenshots
 
-> *Dark mode — Dashboard*
+<div align="center">
 
-> *Light mode — Cost Estimator*
+**Dark Mode — Dashboard**
+![Dashboard](screenshots/dashboard.png)
 
-> *PDF Report with embedded charts*
+<br/>
+
+**Light Mode — Cost Estimator**
+![Cost Estimator](screenshots/cost_estimator.png)
+
+<br/>
+
+**PDF Report — Cost Summary & Charts**
+![Report Page 1](screenshots/report_page1.png)
+
+<br/>
+
+**PDF Report — Material Schedule & Rate Analysis**
+![Report Page 2](screenshots/report_page2.png)
+
+</div>
 
 ---
 
