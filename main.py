@@ -14,6 +14,7 @@ from PyQt6.QtGui import QPixmap, QFont, QColor, QPainter, QPen
 
 from app.models.database import init_database
 from app.utils.paths import resource, data
+from PyQt6.QtGui import QIcon
 
 
 def _setup_logging() -> None:
@@ -156,6 +157,10 @@ def main() -> None:
     app.setApplicationName("ArchForge Pro")
     app.setOrganizationName("ArchForge")
     app.setApplicationVersion("1.0.0")
+
+    icon_path = resource("app/resources/images/icon.ico")
+    if icon_path.exists():
+        app.setWindowIcon(QIcon(str(icon_path)))
 
     # Register bundled pixel font (Press Start 2P)
     from app.utils.fonts import pixel_family

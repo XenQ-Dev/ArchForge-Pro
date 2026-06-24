@@ -14,7 +14,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import Qt, QTimer, QObject, QEvent, pyqtSignal
 
-from PyQt6.QtGui import QColor, QPainter, QFont, QPixmap
+from PyQt6.QtGui import QColor, QPainter, QFont, QPixmap, QIcon
 from app.models.settings_model import get_setting, set_setting
 from app.utils.animated_bg   import AnimatedBackground
 from app.utils.sphere_widget import SphereWidget
@@ -126,6 +126,9 @@ class MainWindow(QMainWindow):
     def __init__(self, user: dict | None = None, token: str | None = None):
         super().__init__()
         self.setWindowTitle("ARCHFORGE PRO  //  CONSTRUCTION COST ESTIMATION SYSTEM")
+        icon_path = resource("app/resources/images/icon.ico")
+        if icon_path.exists():
+            self.setWindowIcon(QIcon(str(icon_path)))
         self.setMinimumSize(1280, 800)
         self.setMouseTracking(True)
 

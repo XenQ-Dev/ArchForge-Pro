@@ -19,6 +19,7 @@ from app.utils.email_sender import send_email, smtp_configured, verification_ema
 from app.utils.fonts import pixel_family
 from app.utils.brand_icons import apple_icon, google_icon
 from app.utils.node_field import NodeFieldBackground
+from app.utils.paths import resource
 
 _EMAIL_RE = re.compile(r"^[^@\s]+@[^@\s]+\.[^@\s]+$")
 
@@ -325,6 +326,9 @@ class LoginWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("ArchForge Pro")
+        icon_path = resource("app/resources/images/icon.ico")
+        if icon_path.exists():
+            self.setWindowIcon(QIcon(str(icon_path)))
         self.setStyleSheet(_qss())
         geo = QApplication.primaryScreen().availableGeometry()
         self.setGeometry(geo)
