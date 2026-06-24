@@ -21,6 +21,9 @@ logs/
 # ML models (large binaries — regenerate with trainer.py)
 ml_models/
 
+# App config (contains SMTP credentials — never commit)
+config.py
+
 # IDE
 .vscode/
 .idea/

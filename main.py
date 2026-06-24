@@ -167,15 +167,49 @@ def main() -> None:
     except Exception as exc:
         logger.error("Database initialisation failed: %s", exc)
 
-    from app.views.main_window import MainWindow
-    window = MainWindow()
+    # Check for a persisted session
+    from app.models.settings_model import get_setting, set_setting
+    from app.models.user_model import get_session_user
+    from app.utils.auth_session import set_current_user
 
-    def _show_main():
-        splash.finish(window)
-        window.show()
-        window.raise_()
+    token = get_setting("active_session", "")
+    user  = get_session_user(token) if token else None
 
-    QTimer.singleShot(1800, _show_main)
+    def _open_main(u: dict, t: str) -> None:
+        from app.views.main_window import MainWindow
+        set_current_user(u, t)
+        win = MainWindow(user=u, token=t)
+        win.signed_out.connect(lambda: _open_login(win))
+        app._main_win = win
+        splash.finish(win)
+        win.show()
+        win.raise_()
+
+    def _open_login(close_first=None) -> None:
+        if close_first:
+            close_first.close()
+        from app.views.auth.login_window import LoginWindow
+        login = LoginWindow()
+        login.login_success.connect(
+            lambda u, t: _on_login_success(login, u, t)
+        )
+        app._login_win = login
+        splash.finish(login)
+        login.show()
+
+    def _on_login_success(login_win: "LoginWindow", u: dict, t: str) -> None:
+        set_setting("active_session", t)
+        login_win.close()
+        _open_main(u, t)
+
+    if user:
+        logger.info("Resuming session for %s", user["email"])
+        QTimer.singleShot(1800, lambda: _open_main(user, token))
+    else:
+        if token:
+            set_setting("active_session", "")  # clear stale token
+        QTimer.singleShot(1800, _open_login)
+
     sys.exit(app.exec())
 
 

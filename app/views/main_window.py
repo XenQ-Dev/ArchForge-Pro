@@ -12,8 +12,9 @@ from PyQt6.QtWidgets import (
     QPushButton, QLabel, QStackedWidget, QStatusBar,
     QSizePolicy, QFrame, QApplication, QScrollArea,
 )
-from PyQt6.QtCore import Qt, QTimer, QObject, QEvent
+from PyQt6.QtCore import Qt, QTimer, QObject, QEvent, pyqtSignal
 
+from PyQt6.QtGui import QColor, QPainter, QFont, QPixmap
 from app.models.settings_model import get_setting, set_setting
 from app.utils.animated_bg   import AnimatedBackground
 from app.utils.sphere_widget import SphereWidget
@@ -120,11 +121,16 @@ class _PageWrapper(QWidget):
 
 
 class MainWindow(QMainWindow):
-    def __init__(self):
+    signed_out = pyqtSignal()
+
+    def __init__(self, user: dict | None = None, token: str | None = None):
         super().__init__()
         self.setWindowTitle("ARCHFORGE PRO  //  CONSTRUCTION COST ESTIMATION SYSTEM")
         self.setMinimumSize(1280, 800)
         self.setMouseTracking(True)
+
+        self._user  = user or {}
+        self._token = token or ""
 
         self._theme       = get_setting("theme", "dark")
         self._active_idx  = 0
@@ -241,6 +247,10 @@ class MainWindow(QMainWindow):
 
         lay.addWidget(_HSep())
 
+        # User profile
+        lay.addWidget(self._build_user_profile())
+        lay.addWidget(_HSep())
+
         # Atlas animation — centred, no extra wrapper padding
         self._sphere = SphereWidget()
         self._sphere.setContentsMargins(0, 8, 0, 8)
@@ -263,6 +273,67 @@ class MainWindow(QMainWindow):
         scroll.setWidget(inner)
         outer_lay.addWidget(scroll)
         return outer
+
+    def _build_user_profile(self) -> QWidget:
+        w = QWidget()
+        w.setStyleSheet("background:transparent;")
+        lay = QVBoxLayout(w)
+        lay.setContentsMargins(14, 10, 14, 6)
+        lay.setSpacing(4)
+
+        sec = QLabel("  // ACCOUNT")
+        sec.setObjectName("sidebar_meta")
+        lay.addWidget(sec)
+
+        row = QHBoxLayout()
+        row.setSpacing(10)
+
+        # Initials avatar
+        name = self._user.get("display_name", "?")
+        initials = "".join(p[0].upper() for p in name.split()[:2]) or "?"
+        avatar = _AvatarLabel(initials)
+        row.addWidget(avatar)
+
+        info = QVBoxLayout()
+        info.setSpacing(2)
+        name_lbl = QLabel(name[:18] + ("…" if len(name) > 18 else ""))
+        name_lbl.setStyleSheet(
+            "color:#ffffff; font-family:'Courier New',monospace; "
+            "font-size:10px; font-weight:700; letter-spacing:1px;"
+        )
+        email = self._user.get("email", "")
+        email_lbl = QLabel(email[:22] + ("…" if len(email) > 22 else ""))
+        email_lbl.setStyleSheet(
+            "color:#444444; font-family:'Courier New',monospace; font-size:9px;"
+        )
+        info.addWidget(name_lbl)
+        info.addWidget(email_lbl)
+        row.addLayout(info)
+        row.addStretch()
+        lay.addLayout(row)
+
+        signout_btn = QPushButton("SIGN OUT")
+        signout_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        signout_btn.setFixedHeight(28)
+        signout_btn.setStyleSheet(
+            "QPushButton { background:transparent; color:#555555; border:1px solid #222222; "
+            "font-family:'Courier New',monospace; font-size:9px; letter-spacing:2px; padding:0 10px; }"
+            "QPushButton:hover { color:#cc3333; border:1px solid #cc3333; }"
+        )
+        signout_btn.clicked.connect(self._sign_out)
+        lay.addWidget(signout_btn)
+        return w
+
+    def _sign_out(self) -> None:
+        from app.models.user_model import delete_session
+        from app.models.settings_model import set_setting
+        from app.utils.auth_session import clear_session
+        if self._token:
+            delete_session(self._token)
+        set_setting("active_session", "")
+        clear_session()
+        self.signed_out.emit()
+        self.close()
 
     @staticmethod
     def _mk_theme_btn(text: str) -> QPushButton:
@@ -338,6 +409,25 @@ class MainWindow(QMainWindow):
                 f"{datetime.now().strftime('%H:%M:%S')}"
             )
 
+
+
+class _AvatarLabel(QLabel):
+    """Circle with initials as user avatar."""
+    def __init__(self, initials: str, size: int = 34):
+        super().__init__()
+        self.setFixedSize(size, size)
+        pix = QPixmap(size, size)
+        pix.fill(QColor("transparent"))
+        p = QPainter(pix)
+        p.setRenderHint(QPainter.RenderHint.Antialiasing)
+        p.setBrush(QColor("#1a1a1a"))
+        p.setPen(QColor("#333333"))
+        p.drawEllipse(1, 1, size - 2, size - 2)
+        p.setPen(QColor("#ffffff"))
+        p.setFont(QFont("Courier New", 11, QFont.Weight.Bold))
+        p.drawText(pix.rect(), Qt.AlignmentFlag.AlignCenter, initials)
+        p.end()
+        self.setPixmap(pix)
 
 
 class _HSep(QFrame):

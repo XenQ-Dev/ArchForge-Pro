@@ -46,6 +46,45 @@ CREATE TABLE IF NOT EXISTS settings (
 );
 
 -- ─────────────────────────────────────────────────────────────────────────
+-- USERS
+-- ─────────────────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS users (
+    id            INTEGER PRIMARY KEY AUTOINCREMENT,
+    email         TEXT    UNIQUE NOT NULL,
+    display_name  TEXT    NOT NULL DEFAULT '',
+    password_hash TEXT,
+    salt          TEXT,
+    is_verified   INTEGER NOT NULL DEFAULT 0,
+    created_at    TEXT    NOT NULL DEFAULT (datetime('now','localtime'))
+);
+
+-- ─────────────────────────────────────────────────────────────────────────
+-- SESSIONS  (persistent login tokens)
+-- ─────────────────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS sessions (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    user_id    INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    token      TEXT    UNIQUE NOT NULL,
+    created_at TEXT    NOT NULL DEFAULT (datetime('now','localtime'))
+);
+
+-- ─────────────────────────────────────────────────────────────────────────
+-- VERIFICATION / RESET CODES
+-- ─────────────────────────────────────────────────────────────────────────
+CREATE TABLE IF NOT EXISTS verification_codes (
+    id         INTEGER PRIMARY KEY AUTOINCREMENT,
+    email      TEXT    NOT NULL,
+    code       TEXT    NOT NULL,
+    purpose    TEXT    NOT NULL,
+    expires_at TEXT    NOT NULL,
+    used       INTEGER NOT NULL DEFAULT 0,
+    created_at TEXT    NOT NULL DEFAULT (datetime('now','localtime'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_sessions_token ON sessions(token);
+CREATE INDEX IF NOT EXISTS idx_vcodes_email   ON verification_codes(email, purpose);
+
+-- ─────────────────────────────────────────────────────────────────────────
 -- PROJECTS
 -- ─────────────────────────────────────────────────────────────────────────
 CREATE TABLE IF NOT EXISTS projects (
@@ -211,6 +250,19 @@ CREATE TABLE IF NOT EXISTS ml_predictions (
 
 def _create_tables(conn: sqlite3.Connection) -> None:
     conn.executescript(_SCHEMA)
+    _migrate(conn)
+
+
+def _migrate(conn: sqlite3.Connection) -> None:
+    """Non-destructive schema migrations for existing databases."""
+    # Add user_id to projects (v1 → v2)
+    cols = {r[1] for r in conn.execute("PRAGMA table_info(projects)").fetchall()}
+    if "user_id" not in cols:
+        conn.execute(
+            "ALTER TABLE projects ADD COLUMN user_id INTEGER REFERENCES users(id)"
+        )
+    # Add SMTP settings keys (seeded later in _seed_defaults if missing)
+
 
 
 # ---------------------------------------------------------------------------
@@ -218,6 +270,11 @@ def _create_tables(conn: sqlite3.Connection) -> None:
 # ---------------------------------------------------------------------------
 _DEFAULT_SETTINGS = {
     "gst_pct": "18.0",
+    "smtp_host": "smtp.gmail.com",
+    "smtp_port": "587",
+    "smtp_user": "",
+    "smtp_pass": "",
+    "active_session": "",
     "labour_pct": "25.0",
     "equipment_pct": "5.0",
     "contractor_pct": "10.0",
