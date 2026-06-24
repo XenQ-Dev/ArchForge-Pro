@@ -16,6 +16,27 @@ from app.models.database import init_database
 from app.utils.paths import resource, data
 from PyQt6.QtGui import QIcon
 
+# Unique identity so Windows shows ArchForge's own taskbar icon instead of
+# grouping the window under python.exe (and using Python's icon).
+APP_USER_MODEL_ID = "ArchForge.Pro.Estimation.1"
+
+
+def _set_app_user_model_id() -> None:
+    """Tell the Windows shell this process is its own app, not python.exe.
+
+    Without this, the taskbar button inherits python.exe's icon regardless of
+    QApplication.setWindowIcon(). No-op on non-Windows platforms.
+    """
+    if sys.platform != "win32":
+        return
+    try:
+        import ctypes
+        ctypes.windll.shell32.SetCurrentProcessExplicitAppUserModelID(
+            APP_USER_MODEL_ID
+        )
+    except Exception:
+        pass
+
 
 def _setup_logging() -> None:
     log_dir = data("logs")
@@ -152,6 +173,8 @@ def main() -> None:
     _setup_logging()
     logger = logging.getLogger(__name__)
     logger.info("Starting ArchForge Pro")
+
+    _set_app_user_model_id()
 
     app = QApplication(sys.argv)
     app.setApplicationName("ArchForge Pro")
