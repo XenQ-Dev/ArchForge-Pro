@@ -356,11 +356,11 @@ class LoginWindow(QMainWindow):
 
         cl.addWidget(_lbl("Welcome back", "h1", center=True))
         cl.addSpacing(12)
-        sub = _lbl("Login with your Apple or Google account", "sub", center=True)
-        sub.setWordWrap(True)
-        sub.setFixedWidth(230)
-        sub_row = QHBoxLayout(); sub_row.addStretch(); sub_row.addWidget(sub); sub_row.addStretch()
-        cl.addLayout(sub_row)
+        # two stacked lines — Press Start 2P has tight leading, so wrapping
+        # one label overlaps; separate labels give clean spacing
+        cl.addWidget(_lbl("Login with your Apple or", "sub", center=True))
+        cl.addSpacing(5)
+        cl.addWidget(_lbl("Google account", "sub", center=True))
         cl.addSpacing(18)
 
         # Apple
