@@ -160,7 +160,14 @@ def main() -> None:
 
     icon_path = resource("app/resources/images/icon.ico")
     if icon_path.exists():
-        app.setWindowIcon(QIcon(str(icon_path)))
+        icon = QIcon(str(icon_path))
+        if not icon.isNull():
+            app.setWindowIcon(icon)
+            logger.info(f"Application icon loaded: {icon_path}")
+        else:
+            logger.warning(f"Icon file exists but failed to load: {icon_path}")
+    else:
+        logger.warning(f"Icon file not found: {icon_path}")
 
     # Register bundled pixel font (Press Start 2P)
     from app.utils.fonts import pixel_family
